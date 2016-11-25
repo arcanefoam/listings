@@ -1,7 +1,7 @@
 # listings
 Improvements/Fixes to the latex listings package.
 
-*DISCALIMER* 
+**DISCALIMER!**
 I am not a latex expert and hence have not tested the changes properly. I have only my personal use cases to validate the modifications I've made.
 
 Since I can't seem to get in touch with the current mainteiner of the listings package, I decided to share my fixes and improvements for others to use. 
