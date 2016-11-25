@@ -16,8 +16,9 @@
 % The listings package is copyright 1996--2004 Carsten Heinz, and
 % continued maintenance on the package is copyright 2006--2007 Brooks
 % Moses. From 2013 on copyright is Jobst Hoffmann, who is the maintainer
-% since july 2013. The drivers are copyright 1997/1998/1999/2000/2001/
-% 2002/2003/2004/2006/2007/2013 any individual author listed in the
+% since july 2013. New features introduced in version 1.7 are copyright
+% 2016 Horacio Hoyos. The drivers are copyright 1997/1998/1999/2000/2001/
+% 2002/2003/2004/2006/2007/2013/2015 any individual author listed in the
 % driver files.
 %
 % The listings package and its drivers may be distributed and/or modified
@@ -115,11 +116,12 @@
 % \author{Copyright 1996--2004, Carsten Heinz%
 %    \\ Copyright 2006--2007, Brooks Moses
 %    \\ Copyright 2013--, Jobst Hoffmann
+%    \\ Copyright 2016--, Horacio Hoyos
 %    \\ Maintainer: Jobst Hoffmann\thanks{Jobst %
 %       Hoffmann became the maintainer of the \packagename{listings}
 %       package in 2013; see the Preface for details.}~ %
 %    \textless\lstemail\textgreater}
-% \date{2015/06/04\enspace\enspace Version 1.6\ \box\abstractbox}
+% \date{2016/25/11\enspace\enspace Version 1.7\ \box\abstractbox}
 % \def\lstemail{\href{mailto:j.hoffmann@fh-aachen.de}{\texttt{j.hoffmann(at)fh-aachen.de}}}
 % \ifhyper
 %    \hypersetup{pdfsubject=Package guide,pdfauthor=Jobst Hoffmann <j.hoffmann(at)fh-aachen.de>}
@@ -149,11 +151,14 @@
 % asked for the integration of a new language and gave the impetus to me to
 % become the maintainer of this package.
 %
+% This release, version 1.7, is a minor maintenance release 
 %
 % \paragraph{News and changes}
-% Version 1.5 is the fifth bugfix release.  There are no changes
-% in this version, but two extensions: support of modern Fortran (2003,
-% 2008) and Lua.
+% Version 1.7 is the fifth bugfix release. There is two fixes in this
+% version: an editorial fix in the documentation and the caption in
+% multicol listings is no longer printed in the first column but
+% rather for the float. There is also one change: add % additional options for
+% typesetting code in external files. 
 %
 %
 % \vfill
@@ -230,7 +235,8 @@
 % Three types of source codes are supported: code snippets, code segments, and
 % listings of stand alone files.  Snippets are placed inside paragraphs and the
 % others as separate paragraphs---the difference is the same as between text
-% style and display style formulas.
+% style and display style formulas. All environments support the optional
+% arguments discussed in section \ref{rMainReference}.
 % \begin{advise}
 % \item No matter what kind of source you have, if a listing contains national
 %       characters like \'e, \L, \"a, or whatever, you must tell the
@@ -303,9 +309,9 @@
 %
 % \paragraph{Stand alone files}
 % Finally we come to |\lstinputlisting|, the command used to pretty-print
-% stand alone files. It has one optional and one file name argument.
-% Note that you possibly need to specify the relative path to the file.
-% Here now the result is printed below the verbatim code since both together
+% stand alone files. It has one file name argument. Note that you
+% possibly need to specify the relative path to the file. 
+% We have printed the result below the example code since together they
 % don't fit the text width.
 % \begin{lstsample}{\lstset{comment=[l]\%,columns=fullflexible}}{\lstset{alsoletter=\\,emph=\\lstinputlisting,emphstyle=\rstyle}\lstaspectindex{\lstinputlisting}{}}
 %    \lstinputlisting[lastline=4]{listings.sty}
@@ -2135,8 +2141,7 @@
 %       \ref{rListingsInsideArguments}.
 %
 %       Another limitation is that this feature can't be used in cells of a
-%       |tabular|-environment. See \section{uListingsArguments} for a
-%       workaround.
+%       |tabular|-environment. See \ref{uListingsArguments} for a workaround.
 %
 %       See also section \ref{rShortInline} for commands to create short analogs
 %       for the |\lstinline| command.
@@ -2216,6 +2221,11 @@
 %       can be used on individual listings only. The given line ranges
 %       of the listing are displayed. The intervals must be sorted and must
 %       not intersect.
+%
+% \item[0.12,true] \rkeyname{ellipsis}|=|\meta{\alternative{true,false}}\syntaxor\rkeyname{ellipsis}
+%
+%       controls whether an ellipsis is used to indicate a break when using
+%       multiple ranges with the \texttt{linerange} option. 
 %
 % \item[0.20,false] \rkeyname{showlines}|=|\meta{\alternative{true,false}}\syntaxor\rkeyname{showlines}
 %
@@ -5748,6 +5758,7 @@
 %% elsewhere in this file.
 %% (c) 2006 Brooks Moses
 %% (c) 2013- Jobst Hoffmann
+%% (c) 2016- Horacio Hoyos
 %%
 %% Send comments and ideas on the package, error reports and additional
 %% programming languages to Jobst Hoffmann at <j.hoffmann@fh-aachen.de>.
@@ -5757,8 +5768,8 @@
 % \paragraph{Identification}
 % All files will have same date and version.
 %    \begin{macrocode}
-\def\filedate{2015/06/04}
-\def\fileversion{1.6}
+\def\filedate{2016/11/25}
+\def\fileversion{1.7}
 %    \end{macrocode}
 % What we need and who we are.
 %    \begin{macrocode}
@@ -13365,6 +13376,7 @@
 % \begin{lstkey}{firstline}
 % \begin{lstkey}{lastline}
 % \begin{lstkey}{linerange}
+% \begin{lstkey}{ellipsis}
 % The `current line' counter and three keys.
 %    \begin{macrocode}
 \newcount\lst@lineno % \global
@@ -13389,6 +13401,7 @@
 %    \begin{macrocode}
 \lst@Key{linerange}\relax{\lstKV@OptArg[]{#1}{%
     \def\lst@interrange{##1}\def\lst@linerange{##2,}}}
+\lst@Key{ellipsis}{true}[t]{\lstKV@SetIf{#1}\lst@ifellipsis}    
 \lst@Key{rangeprefix}\relax{\def\lst@rangebeginprefix{#1}%
                             \def\lst@rangeendprefix{#1}}
 \lst@Key{rangesuffix}\relax{\def\lst@rangebeginsuffix{#1}%
@@ -13562,8 +13575,13 @@
     \ifnum \lst@lineno=\lst@firstline
         \def\lst@next{\lst@LeaveMode \global\lst@newlines\z@
         \lst@OnceAtEOL \global\let\lst@OnceAtEOL\@empty
+        \ifnum\c@lstnumber>1
+        \vspace{1em}\lst@ifprint\leavevmode\\
+        \noindent{\normalsize\dots} \fi
+        \fi
         \lst@InitLstNumber % Added to work with modified \lsthk@PreInit.
         \lsthk@InitVarsBOL
+        \c@lstnumber=\numexpr-1+\lst@lineno % this enforces the displayed line numbers to always be the input line numbers
         \lst@BOLGobble}%
         \expandafter\lst@next
     \fi}

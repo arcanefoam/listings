@@ -12,12 +12,13 @@
 %% elsewhere in this file.
 %% (c) 2006 Brooks Moses
 %% (c) 2013- Jobst Hoffmann
+%% (c) 2016- Horacio Hoyos
 %%
 %% Send comments and ideas on the package, error reports and additional
 %% programming languages to Jobst Hoffmann at <j.hoffmann@fh-aachen.de>.
 %%
-\def\filedate{2015/06/04}
-\def\fileversion{1.6}
+\def\filedate{2016/11/25}
+\def\fileversion{1.7}
 \NeedsTeXFormat{LaTeX2e}
 \AtEndOfPackage{\ProvidesPackage{listings}
              [\filedate\space\fileversion\space(Carsten Heinz)]}
@@ -1403,6 +1404,7 @@
     {\let\lst@firstline\@ne \def\lst@lastline{9999999\relax}}
 \lst@Key{linerange}\relax{\lstKV@OptArg[]{#1}{%
     \def\lst@interrange{##1}\def\lst@linerange{##2,}}}
+\lst@Key{ellipsis}{true}[t]{\lstKV@SetIf{#1}\lst@ifellipsis}
 \lst@Key{rangeprefix}\relax{\def\lst@rangebeginprefix{#1}%
                             \def\lst@rangeendprefix{#1}}
 \lst@Key{rangesuffix}\relax{\def\lst@rangebeginsuffix{#1}%
@@ -1524,8 +1526,13 @@
     \ifnum \lst@lineno=\lst@firstline
         \def\lst@next{\lst@LeaveMode \global\lst@newlines\z@
         \lst@OnceAtEOL \global\let\lst@OnceAtEOL\@empty
+        \ifnum\c@lstnumber>1
+        \vspace{1em}\lst@ifprint\leavevmode\\
+        \noindent{\normalsize\dots} \fi
+        \fi
         \lst@InitLstNumber % Added to work with modified \lsthk@PreInit.
         \lsthk@InitVarsBOL
+        \c@lstnumber=\numexpr-1+\lst@lineno % this enforces the displayed line numbers to always be the input line numbers
         \lst@BOLGobble}%
         \expandafter\lst@next
     \fi}
